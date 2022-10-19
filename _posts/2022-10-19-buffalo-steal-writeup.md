@@ -1,6 +1,5 @@
 ---
 title: '[화이트햇콘테스트-예선] Web+Forensics Writeup'
-author: 돔돔이부하
 categories: [writeups, CTF]
 tags: [web, CTF, forensics, writeup]
 ---
