@@ -4,9 +4,7 @@ categories: [writeups, CTF]
 tags: [web, CTF, writeup]
 ---
 
-# [ASIS CTF] Beginner ducks Writeup
-
-## Introduction
+# Introduction
 
 > **Beginner ducks (37 pts, 176 solves)**
 > <br>Hiiiii, welcome to ASIS CTF. We have ducks. Check them out here Note for beginners: If you haven't played CTF before, this video might help you to understand what you have to do.
@@ -26,8 +24,8 @@ http://ducks.asisctf.com:8000/duck?what=duckLookingAtAHacker
 ![imagepage](/assets/img/beginner_ducks_writeup-1.png){: .shadow }
 _이미지 페이지_
 
-## Code Analysis
-### main.py
+# Code Analysis
+## main.py
 ```python
 #!/usr/bin/env python3
 from flask import Flask,request,Response
@@ -86,7 +84,7 @@ with open('./images/e146727ce27b9ed172e70d85b2da4736.jpeg') as f:
 하지만 이외에도 `Flask`의 `request`에는 다양한 속성들이 있습니다.
 한번 알아보고 사용해서 Flag를 추출해보겠습니다.
 
-## Exploit
+# Exploit
 [Flask.Request](https://flask.palletsprojects.com/en/2.2.x/api/?highlight=request#flask.Request.headers)에는 다양한 속성들이 있습니다.
 
 다른 속성들을 사용해도 되겠지만 저는 [request.referrer](https://flask.palletsprojects.com/en/2.2.x/api/?highlight=request#flask.Request.referrer)를 이용해서 풀었습니다.
